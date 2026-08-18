@@ -1,0 +1,680 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "metadata": {
+    "project_name": "Hamsa",
+    "project_name_ar": "همسة",
+    "version": "1.0.0",
+    "description": "قاعدة معرفة (Knowledge Base) لتطبيق تعليمي ذكي يولّد قصصاً اجتماعية وجداول بصرية مخصصة لأطفال طيف التوحد (ASD) لدعم الانتقال بين الأنشطة وتقليل القلق السلوكي.",
+    "target_users": "أطفال طيف التوحد (عمر 4-12 سنة تقريباً)، أولياء الأمور، المعلمون، أخصائيو التخاطب والسلوك",
+    "domain": "Assistive EdTech / AI for Special Needs Education",
+    "architecture_alignment": {
+      "reference_framework": "ITU-T Y.3172 (Architectural framework for machine learning in future networks including IMT-2020)",
+      "note": "تم الاسترشاد بمبدأ فصل طبقات البيانات عن طبقة الاستدلال (Data / Model / Orchestration) الوارد في Y.3172 كنمط تصميم عام لتنظيم قاعدة المعرفة، وليس كتطبيق حرفي لمعيار شبكات الاتصالات. المعيار موجّه أصلاً لشبكات IMT-2020 وتم تكييف مبدأ الفصل الطبقي فقط.",
+      "layers": [
+        {
+          "layer": "data_layer",
+          "maps_to": [
+            "privacy_policy",
+            "open_data_references"
+          ]
+        },
+        {
+          "layer": "knowledge_model_layer",
+          "maps_to": [
+            "behavioral_scenarios",
+            "social_stories_templates"
+          ]
+        },
+        {
+          "layer": "orchestration_layer",
+          "maps_to": [
+            "educational_policy",
+            "generation_rules"
+          ]
+        }
+      ]
+    },
+    "last_updated": "2026-08-15",
+    "language": [
+      "ar",
+      "en"
+    ]
+  },
+  "authentic_sources": [
+    {
+      "id": "AS-01",
+      "title": "TEACCH Autism Program — Structured TEACCHing",
+      "authors_or_organization": "University of North Carolina at Chapel Hill, TEACCH Autism Program (UNC School of Medicine)",
+      "source_type": "official_document",
+      "original_url": "https://teacch.com/",
+      "source_description": "الموقع الرسمي لبرنامج TEACCH Autism Program التابع لجامعة UNC. يُستخدم هنا كمرجع رسمي لمنهج Structured TEACCHing والتنظيم البصري والبيئي.",
+      "used_for": "educational_policy.pedagogical_approach، والمبدأ EP-01 (التنبؤ) وEP-02 (التبسيط الحسي)",
+      "established_year": 1972
+    },
+    {
+      "id": "AS-02",
+      "title": "What Is a Social Story? — Social Story Criteria",
+      "authors_or_organization": "Carol Gray (Carol Gray Social Stories)",
+      "publication_year": 2024,
+      "source_type": "official_document",
+      "original_url": "https://carolgraysocialstories.com/social-stories/what-is-a-social-story/",
+      "source_description": "صفحة رسمية من Carol Gray Social Stories تشرح مفهوم Social Story ومعاييرها.",
+      "used_for": "educational_policy (مبدأ EP-03 وEP-04)، وبنية social_stories_templates (الجمل الوصفية/المنظورية/التوجيهية/التأكيدية)"
+    },
+    {
+      "id": "AS-03",
+      "title": "EBP Brief Packet: Visual Supports",
+      "authors_or_organization": "Sam, A., & AFIRM Team — UNC Frank Porter Graham Child Development Institute (National Clearinghouse on Autism Evidence & Practice)",
+      "publication_year": 2024,
+      "source_type": "paper",
+      "original_url": "https://afirm.fpg.unc.edu/visual-supports",
+      "source_description": "مورد من AFIRM التابع لمعهد Frank Porter Graham في UNC حول Visual Supports كممارسة قائمة على الأدلة في مجال التوحد.",
+      "used_for": "educational_policy (استخدام الجداول البصرية)، وحقل visual_schedule_needed في behavioral_scenarios"
+    },
+    {
+      "id": "AS-04",
+      "title": "Children's Online Privacy Protection Rule (COPPA) — 16 CFR Part 312",
+      "authors_or_organization": "U.S. Federal Trade Commission (FTC)",
+      "publication_year": 1998,
+      "source_type": "official_document",
+      "original_url": "https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa",
+      "source_description": "النص الرسمي الأمريكي لقاعدة حماية خصوصية الأطفال على الإنترنت، يحدد شروط الموافقة الأبوية قبل جمع بيانات أطفال دون 13 عاماً.",
+      "used_for": "privacy_policy.reference_frameworks (COPPA)، وconsent_rules"
+    },
+    {
+      "id": "AS-05",
+      "title": "Family Educational Rights and Privacy Act (FERPA)",
+      "authors_or_organization": "U.S. Department of Education, Student Privacy Policy Office",
+      "publication_year": 1974,
+      "source_type": "official_document",
+      "original_url": "https://studentprivacy.ed.gov/ferpa",
+      "source_description": "الصفحة الرسمية لقانون حقوق الأسرة التعليمية والخصوصية الأمريكي الذي يحكم سرية السجلات التعليمية للطلاب.",
+      "used_for": "privacy_policy.reference_frameworks (FERPA)، وقواعد data_classification الخاصة بالسجلات التعليمية"
+    },
+    {
+      "id": "AS-06",
+      "title": "Regulation (EU) 2016/679 (GDPR) — Article 8: Conditions applicable to child's consent",
+      "authors_or_organization": "European Union",
+      "publication_year": 2016,
+      "source_type": "official_document",
+      "original_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+      "source_description": "النص الرسمي للائحة الاتحاد الأوروبي 2016/679 (GDPR)، ويُستخدم المرجع للمبادئ المتعلقة بمعالجة بيانات الأطفال وموافقة الوالدين، وفق المادة 8.",
+      "used_for": "privacy_policy.reference_frameworks (GDPR - Article 8)، وconsent_rules"
+    },
+    {
+      "id": "AS-07",
+      "title": "Personal Data Protection Law (PDPL) — Saudi Arabia",
+      "authors_or_organization": "Saudi Data & Artificial Intelligence Authority (SDAIA)",
+      "publication_year": 2021,
+      "source_type": "official_document",
+      "original_url": "https://sdaia.gov.sa/en/Research/Pages/DataProtection.aspx",
+      "source_description": "الصفحة الرسمية لهيئة البيانات والذكاء الاصطناعي السعودية (سدايا) الخاصة بنظام حماية البيانات الشخصية، الصادر بالمرسوم الملكي رقم م/19.",
+      "used_for": "privacy_policy.reference_frameworks (PDPL)"
+    },
+    {
+      "id": "AS-08",
+      "title": "Autism Screening on Adults",
+      "authors_or_organization": "Thabtah, F. (dataset originally via UCI Machine Learning Repository, mirrored on Kaggle)",
+      "publication_year": 2017,
+      "source_type": "dataset",
+      "original_url": "https://www.kaggle.com/datasets/andrewmvd/autism-screening-on-adults",
+      "source_description": "بيانات استبيان فرز أولي لطيف التوحد (AQ-10) للبالغين. تُستخدم كسياق إحصائي عام وليست مصدراً علمياً أساسياً للقواعد التربوية أو السلوكية في المشروع.",
+      "used_for": "open_data_references فقط — سياق وخلفية إحصائية للعرض التقديمي، وليست أساساً للمبادئ التعليمية"
+    },
+    {
+      "id": "AS-09",
+      "title": "UNESCO Institute for Statistics (UIS) — Education Data",
+      "authors_or_organization": "UNESCO Institute for Statistics",
+      "publication_year": 2026,
+      "source_type": "dataset",
+      "original_url": "https://uis.unesco.org/en",
+      "source_description": "المصدر الرسمي والموثوق لبيانات التعليم العالمية القابلة للمقارنة بين الدول، بما فيها مؤشرات التعليم الدامج.",
+      "used_for": "open_data_references فقط — سياق إحصائي عام حول التعليم الدامج"
+    },
+    {
+      "id": "AS-10",
+      "title": "Autism and Developmental Disabilities Monitoring (ADDM) Network",
+      "authors_or_organization": "U.S. Centers for Disease Control and Prevention (CDC)",
+      "publication_year": 2024,
+      "source_type": "official_document",
+      "original_url": "https://www.cdc.gov/autism/addm-network/index.html",
+      "source_description": "الشبكة الرسمية الأمريكية لرصد انتشار وخصائص طيف التوحد بين الأطفال، تابعة لمركز السيطرة على الأمراض (CDC).",
+      "used_for": "open_data_references فقط — سياق إحصائي حول انتشار طيف التوحد"
+    }
+  ],
+  "privacy_policy": {
+    "scope": "قواعد خصوصية بيانات الطلاب (Student Data Privacy) مستلهمة من مبادئ عامة مثل COPPA وFERPA وGDPR-K كأطر مرجعية شائعة عالمياً لخصوصية بيانات الأطفال والطلاب، دون الادعاء بامتثال رسمي كامل لأي منها. المصادر الرسمية الكاملة موثقة في authentic_sources.",
+    "reference_frameworks": [
+      {
+        "name": "COPPA",
+        "region": "USA",
+        "focus": "حماية بيانات الأطفال دون 13 عاماً عبر الإنترنت",
+        "source_id": "AS-04"
+      },
+      {
+        "name": "FERPA",
+        "region": "USA",
+        "focus": "سرية السجلات التعليمية للطلاب",
+        "source_id": "AS-05"
+      },
+      {
+        "name": "GDPR - Article 8",
+        "region": "EU",
+        "focus": "شروط موافقة الوالدين على معالجة بيانات الأطفال",
+        "source_id": "AS-06"
+      },
+      {
+        "name": "PDPL",
+        "region": "Saudi Arabia",
+        "focus": "نظام حماية البيانات الشخصية السعودي",
+        "source_id": "AS-07"
+      }
+    ],
+    "data_classification": [
+      {
+        "category": "PII_sensitive",
+        "examples_ar": [
+          "الاسم الكامل",
+          "تاريخ الميلاد الدقيق",
+          "التشخيص الطبي التفصيلي",
+          "الصور الشخصية"
+        ],
+        "storage_rule": "تشفير إلزامي (AES-256) وتخزين منفصل عن بيانات السلوك التحليلية",
+        "retention_days": 365,
+        "requires_parental_consent": true
+      },
+      {
+        "category": "behavioral_data",
+        "examples_ar": [
+          "سجل مستوى القلق المُبلّغ عنه",
+          "أنماط الاستجابة للجدول البصري",
+          "مدة إتمام النشاط"
+        ],
+        "storage_rule": "تُخزَّن بشكل مُجهَّل (anonymized) مرتبطة برمز تعريف عشوائي لا بالاسم",
+        "retention_days": 180,
+        "requires_parental_consent": true
+      },
+      {
+        "category": "generated_content",
+        "examples_ar": [
+          "القصة الاجتماعية المولَّدة",
+          "الجدول البصري المولَّد"
+        ],
+        "storage_rule": "تُخزَّن مرتبطة بحساب ولي الأمر فقط، قابلة للحذف الفوري بطلب المستخدم",
+        "retention_days": 90,
+        "requires_parental_consent": false
+      }
+    ],
+    "consent_rules": {
+      "consent_holder": "guardian_only",
+      "child_direct_consent_allowed": false,
+      "revocation": "يحق لولي الأمر سحب الموافقة وحذف كامل البيانات في أي وقت (Right to Erasure)",
+      "data_sharing_with_third_parties": "ممنوع افتراضياً، إلا لمزودي بنية تحتية تقنية موثوقين وبعقد معالجة بيانات (DPA)"
+    },
+    "ai_specific_safeguards": [
+      "عدم استخدام بيانات الأطفال لتدريب نماذج عامة خارج نطاق المشروع دون موافقة صريحة",
+      "تشغيل مراجعة بشرية (human-in-the-loop) على القصص المولَّدة قبل عرضها للطفل أول مرة",
+      "حجب أي محتوى مولَّد يحتوي إشارات ضغط نفسي أو مخاوف حادة وتحويلها لمراجعة يدوية"
+    ]
+  },
+  "educational_policy": {
+    "pedagogical_approach": "قائم على مبادئ TEACCH وSocial Stories (Carol Gray) والجدولة البصرية (Visual Schedules) الشائعة في تعليم طيف التوحد",
+    "source_ids": [
+      "AS-01",
+      "AS-02",
+      "AS-03"
+    ],
+    "core_principles": [
+      {
+        "id": "EP-01",
+        "principle_ar": "التنبؤ (Predictability)",
+        "description_ar": "كل انتقال بين نشاطين يجب أن يُعرض بصرياً ولفظياً قبل حدوثه بوقت كافٍ"
+      },
+      {
+        "id": "EP-02",
+        "principle_ar": "التبسيط الحسي",
+        "description_ar": "تقليل التحفيز البصري الزائد: ألوان هادئة، أيقونات واضحة، خط واحد ثابت"
+      },
+      {
+        "id": "EP-03",
+        "principle_ar": "التخصيص الفردي",
+        "description_ar": "كل قصة اجتماعية تُبنى على مثيرات القلق الخاصة بالطفل المُدخلة من ولي الأمر أو المعلم"
+      },
+      {
+        "id": "EP-04",
+        "principle_ar": "التعزيز الإيجابي",
+        "description_ar": "تنتهي كل قصة أو جدول بعبارة تشجيعية محددة وواقعية وليست عامة"
+      }
+    ],
+    "content_generation_constraints": {
+      "max_sentence_length_words": 12,
+      "vocabulary_level": "بسيط ومباشر، تجنب المجاز والاستعارة",
+      "tone": "هادئ، إيجابي، غير آمر",
+      "prohibited_content": [
+        "التهديد أو الوعيد",
+        "المقارنة بأطفال آخرين",
+        "الإشارة السلبية للتشخيص",
+        "الرموز أو الشخصيات المخيفة بصرياً"
+      ]
+    }
+  },
+  "behavioral_scenarios": [
+    {
+      "scenario_id": "BS-001",
+      "title_ar": "الانتقال من وقت اللعب إلى الدرس",
+      "trigger_ar": "صعوبة إنهاء نشاط مفضل والبدء بنشاط أقل تفضيلاً",
+      "anxiety_level": "medium",
+      "recommended_story_template_id": "ST-101",
+      "visual_schedule_needed": true,
+      "suggested_lead_time_minutes": 5
+    },
+    {
+      "scenario_id": "BS-002",
+      "title_ar": "دخول الفصل بعد الاصطفاف الصباحي",
+      "trigger_ar": "الازدحام والضوضاء في الممر",
+      "anxiety_level": "high",
+      "recommended_story_template_id": "ST-102",
+      "visual_schedule_needed": true,
+      "suggested_lead_time_minutes": 10
+    },
+    {
+      "scenario_id": "BS-003",
+      "title_ar": "تغيير غير متوقع في الجدول (إلغاء حصة)",
+      "trigger_ar": "كسر الروتين المتوقع",
+      "anxiety_level": "high",
+      "recommended_story_template_id": "ST-103",
+      "visual_schedule_needed": true,
+      "suggested_lead_time_minutes": 15
+    },
+    {
+      "scenario_id": "BS-004",
+      "title_ar": "المشاركة في نشاط جماعي",
+      "trigger_ar": "التفاعل الاجتماعي مع أقران متعددين",
+      "anxiety_level": "medium",
+      "recommended_story_template_id": "ST-104",
+      "visual_schedule_needed": false,
+      "suggested_lead_time_minutes": 5
+    },
+    {
+      "scenario_id": "BS-005",
+      "title_ar": "تجربة طعام جديد في وقت الغداء",
+      "trigger_ar": "الحساسية الحسية تجاه القوام أو الرائحة الجديدة",
+      "anxiety_level": "medium",
+      "recommended_story_template_id": "ST-105",
+      "visual_schedule_needed": false,
+      "suggested_lead_time_minutes": 0
+    },
+    {
+      "scenario_id": "BS-006",
+      "title_ar": "الانتقال إلى حصة الرياضة",
+      "trigger_ar": "الضوضاء والحركة السريعة والاتصال الجسدي غير المتوقع",
+      "anxiety_level": "high",
+      "recommended_story_template_id": "ST-106",
+      "visual_schedule_needed": true,
+      "suggested_lead_time_minutes": 10
+    },
+    {
+      "scenario_id": "BS-007",
+      "title_ar": "الذهاب إلى الحمام في وقت غير مجدول بالجدول",
+      "trigger_ar": "كسر تسلسل الجدول المعتاد والحاجة لطلب استئذان لفظي",
+      "anxiety_level": "low",
+      "recommended_story_template_id": "ST-107",
+      "visual_schedule_needed": false,
+      "suggested_lead_time_minutes": 0
+    },
+    {
+      "scenario_id": "BS-008",
+      "title_ar": "انتهاء اليوم الدراسي والاستعداد للمغادرة",
+      "trigger_ar": "القلق من نسيان الأغراض الشخصية أو عدم معرفة من سيصطحبه",
+      "anxiety_level": "medium",
+      "recommended_story_template_id": "ST-108",
+      "visual_schedule_needed": true,
+      "suggested_lead_time_minutes": 10
+    }
+  ],
+  "social_stories_templates": [
+    {
+      "template_id": "ST-101",
+      "linked_scenario_id": "BS-001",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence",
+          "purpose_ar": "وصف الموقف كما هو دون حكم"
+        },
+        {
+          "step": 2,
+          "type": "perspective_sentence",
+          "purpose_ar": "شرح شعور الآخرين أو سبب القاعدة"
+        },
+        {
+          "step": 3,
+          "type": "directive_sentence",
+          "purpose_ar": "توجيه إيجابي واضح للسلوك المطلوب"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence",
+          "purpose_ar": "طمأنة وتعزيز إيجابي في النهاية"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{favorite_toy}",
+        "{next_activity}",
+        "{teacher_name}"
+      ]
+    },
+    {
+      "template_id": "ST-102",
+      "linked_scenario_id": "BS-002",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "coping_strategy_sentence",
+          "purpose_ar": "اقتراح أداة تهدئة ملموسة مثل سماعة أو عد إلى 5"
+        },
+        {
+          "step": 3,
+          "type": "directive_sentence"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{calming_tool}",
+        "{classroom_number}"
+      ]
+    },
+    {
+      "template_id": "ST-103",
+      "linked_scenario_id": "BS-003",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "perspective_sentence",
+          "purpose_ar": "توضيح أن التغييرات المفاجئة تحدث أحياناً حتى للكبار"
+        },
+        {
+          "step": 3,
+          "type": "coping_strategy_sentence",
+          "purpose_ar": "اقتراح النظر للجدول البصري المحدَّث فوراً كمرجع ثابت"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{cancelled_activity}",
+        "{new_activity}"
+      ]
+    },
+    {
+      "template_id": "ST-104",
+      "linked_scenario_id": "BS-004",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "perspective_sentence",
+          "purpose_ar": "شرح أن لكل طفل دوراً في النشاط الجماعي"
+        },
+        {
+          "step": 3,
+          "type": "directive_sentence"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{group_activity_name}",
+        "{child_role}"
+      ]
+    },
+    {
+      "template_id": "ST-105",
+      "linked_scenario_id": "BS-005",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "coping_strategy_sentence",
+          "purpose_ar": "اقتراح تجربة قضمة صغيرة أو شم الطعام أولاً دون إلزام"
+        },
+        {
+          "step": 3,
+          "type": "directive_sentence"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{new_food}",
+        "{favorite_food}"
+      ]
+    },
+    {
+      "template_id": "ST-106",
+      "linked_scenario_id": "BS-006",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "perspective_sentence",
+          "purpose_ar": "توضيح أن الضوضاء طبيعية وتنتهي بعد وقت محدد"
+        },
+        {
+          "step": 3,
+          "type": "coping_strategy_sentence",
+          "purpose_ar": "اقتراح الوقوف بجانب صديق أو المعلم عند الحاجة"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{sports_teacher_name}",
+        "{calming_tool}"
+      ]
+    },
+    {
+      "template_id": "ST-107",
+      "linked_scenario_id": "BS-007",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "directive_sentence",
+          "purpose_ar": "جملة طلب واضحة وقصيرة يمكن للطفل حفظها وتكرارها"
+        },
+        {
+          "step": 3,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{teacher_name}",
+        "{request_phrase}"
+      ]
+    },
+    {
+      "template_id": "ST-108",
+      "linked_scenario_id": "BS-008",
+      "structure": [
+        {
+          "step": 1,
+          "type": "descriptive_sentence"
+        },
+        {
+          "step": 2,
+          "type": "directive_sentence",
+          "purpose_ar": "قائمة تحقق مرئية قصيرة بالأغراض قبل المغادرة"
+        },
+        {
+          "step": 3,
+          "type": "perspective_sentence",
+          "purpose_ar": "تحديد اسم الشخص الذي سيصطحب الطفل بوضوح"
+        },
+        {
+          "step": 4,
+          "type": "affirmative_sentence"
+        }
+      ],
+      "placeholders": [
+        "{child_name}",
+        "{pickup_person_name}",
+        "{checklist_items}"
+      ]
+    }
+  ],
+  "open_data_references": {
+    "purpose": "مصادر بيانات مفتوحة يمكن الاستشهاد بها أو استخدامها لتدريب/تقييم نماذج مساعدة، دون تضمين أي بيانات شخصية حقيقية لأطفال. هذه مصادر بيانات وسياق إحصائي فقط — الأساس العلمي والتربوي لقواعد النظام موثّق في authentic_sources (AS-01 إلى AS-07).",
+    "sources": [
+      {
+        "source_id": "AS-08",
+        "name": "Autism Screening on Adults",
+        "platform": "Kaggle",
+        "type": "tabular_screening_data",
+        "original_url": "https://www.kaggle.com/datasets/andrewmvd/autism-screening-on-adults",
+        "is_core_scientific_source": false,
+        "notes_ar": "بيانات استبيان فرز أولي (AQ-10) تُستخدم للتحليل الإحصائي العام فقط وليست جزءاً من بيانات المستخدمين الفعليين، وليست مصدراً علمياً بُنيت عليه قواعد النظام"
+      },
+      {
+        "source_id": "AS-09",
+        "name": "UNESCO Institute for Statistics - Education Data",
+        "platform": "UIS.Stat",
+        "type": "aggregate_statistics",
+        "original_url": "https://uis.unesco.org/en",
+        "is_core_scientific_source": false,
+        "notes_ar": "مؤشرات عالمية حول التعليم الدامج (Inclusive Education) لدعم فرضيات التصميم والسياق التقديمي فقط"
+      },
+      {
+        "source_id": "AS-10",
+        "name": "CDC Autism and Developmental Disabilities Monitoring (ADDM) Network",
+        "platform": "cdc.gov",
+        "type": "epidemiological_statistics",
+        "original_url": "https://www.cdc.gov/autism/addm-network/index.html",
+        "is_core_scientific_source": false,
+        "notes_ar": "إحصاءات انتشار طيف التوحد تُستخدم في السياق والمقدمة التقديمية للمشروع فقط"
+      }
+    ],
+    "usage_disclaimer_ar": "هذه المصادر مرجعية للسياق والتحقق الإحصائي في العرض التقديمي للهكاثون، ولا تُستخدم كمصدر مباشر لبيانات حقيقية عن مستخدمي التطبيق، ولا تُعتبر المرجعية العلمية الأساسية لقواعد النظام التربوية أو السلوكية."
+  },
+  "content_provenance_review": {
+    "purpose_ar": "مراجعة توثيقية توضح أي أقسام في قاعدة المعرفة مبنية فعلياً على مصادر أصلية موثقة داخل authentic_sources، وأيها اجتهاد تصميمي داخلي لفريق المشروع لم يُخترع له مصدر وهمي.",
+    "sections": [
+      {
+        "section": "privacy_policy",
+        "status": "sourced",
+        "source_ids": [
+          "AS-04",
+          "AS-05",
+          "AS-06",
+          "AS-07"
+        ],
+        "note_ar": "أطر الخصوصية الأربعة موثّقة رسمياً عبر روابط حقيقية. أما آليات التخزين التقنية التفصيلية (مثل مدة الاحتفاظ بالأيام أو التشفير AES-256) فهي قرارات تصميم داخلية للمشروع وليست منقولة حرفياً من أي من هذه الأطر."
+      },
+      {
+        "section": "educational_policy",
+        "status": "sourced",
+        "source_ids": [
+          "AS-01",
+          "AS-02",
+          "AS-03"
+        ],
+        "note_ar": "المبادئ العامة المستخدمة في المشروع مرتبطة بالمصادر AS-01 وAS-02 وAS-03. أما القيود التفصيلية لتوليد المحتوى (مثل حد 12 كلمة لكل جملة) فهي قرار تصميمي داخلي للمشروع وليست منسوبة إلى مصدر خارجي.",
+        "not_sourced_flag": "حد الـ 12 كلمة تحديداً غير موثّق بمصدر خارجي — إذا لزم توثيقه يُفضّل استبداله بعبارة عامة مثل 'جمل قصيرة' أو ربطه بدراسة لاحقة"
+      },
+      {
+        "section": "behavioral_scenarios",
+        "status": "partially_sourced",
+        "source_ids": [
+          "AS-01",
+          "AS-03"
+        ],
+        "note_ar": "فكرة تصنيف مواقف الانتقال والقلق السلوكي مبنية على مبادئ TEACCH وAFIRM العامة. أما قائمة السيناريوهات الثمانية (BS-001 إلى BS-008) بصياغتها وتفاصيلها الحالية فهي اجتهاد تصميمي لفريق همسة، وليست منسوخة من دراسة واحدة تسرد هذه السيناريوهات بعينها.",
+        "not_sourced_flag": "لا يوجد مصدر أكاديمي واحد يوثّق هذه السيناريوهات الثمانية تحديداً بصياغتها الحالية؛ لم يُخترع مصدر وهمي لها عمداً"
+      },
+      {
+        "section": "social_stories_templates",
+        "status": "partially_sourced",
+        "source_ids": [
+          "AS-02"
+        ],
+        "note_ar": "بنية الجمل الأربع (وصفية / منظورية / توجيهية / تأكيدية) مبنية مباشرة على معايير Carol Gray الرسمية العشرة للقصة الاجتماعية. أما نص الـ placeholders والصياغة العربية التفصيلية فهي من تصميم فريق المشروع."
+      },
+      {
+        "section": "open_data_references",
+        "status": "sourced_context_only",
+        "source_ids": [
+          "AS-08",
+          "AS-09",
+          "AS-10"
+        ],
+        "note_ar": "مصادر بيانات وسياق حقيقية وقابلة للتحقق عبر روابطها، لكنها ليست الأساس العلمي للقواعد التربوية أو السلوكية في المشروع — الأساس العلمي موجود في AS-01 وAS-02 وAS-03."
+      }
+    ]
+  },
+  "generation_rules": {
+    "pipeline": [
+      "1. استقبال مدخلات ولي الأمر/المعلم (اسم الطفل، السيناريو، أداة التهدئة المفضلة)",
+      "2. مطابقة السيناريو مع behavioral_scenarios لتحديد template الأنسب",
+      "3. تعبئة social_stories_templates بالـ placeholders",
+      "4. تمرير المحتوى المولَّد عبر فلتر prohibited_content في educational_policy",
+      "5. مراجعة بشرية اختيارية قبل أول عرض للطفل (human_in_the_loop)",
+      "6. تخزين الناتج ضمن تصنيف generated_content في privacy_policy"
+    ]
+  },
+  "source_verification_note": {
+    "purpose_ar": "توضيح حالة التوثيق للمصادر الأساسية قبل التسليم.",
+    "rule_ar": "لا تُنسب أي قاعدة تصميمية داخلية إلى مصدر خارجي ما لم يدعمها المصدر بوضوح.",
+    "verified_core_sources": [
+      "AS-01",
+      "AS-02",
+      "AS-03",
+      "AS-04",
+      "AS-05",
+      "AS-06",
+      "AS-07"
+    ],
+    "context_sources": [
+      "AS-08",
+      "AS-09",
+      "AS-10"
+    ]
+  }
+}

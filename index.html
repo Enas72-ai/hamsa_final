@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAMSA — AI-Powered Adaptive Preparation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#21302F; --ink-soft:#5B6B67;
+    --sand:#F3EEE3; --card:#FFFFFF; --line:#E6DFCF;
+    --teal:#1F5C57; --teal-deep:#123330;
+    --sage:#6F9A5E; --sage-bg:#EAF1E4;
+    --amber:#D99A3E; --amber-bg:#FBF0DE;
+    --sky:#5F84A9; --sky-bg:#E9F0F6;
+    --coral:#BD5148; --coral-bg:#F7E7E4;
+    --violet:#8B6FA8;
+    --shadow:0 4px 20px rgba(18,51,48,.07);
+    --shadow-lg:0 10px 36px rgba(18,51,48,.10);
+    --radius-lg:18px; --radius-md:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--sand);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4,.display{font-family:'Plus Jakarta Sans',sans-serif;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  button{font-family:'Inter',sans-serif;cursor:pointer;}
+  input,textarea{font-family:'Inter',sans-serif;}
+
+  /* status bar */
+  .status-bar{background:var(--teal-deep);color:#DCEFE9;font-size:12.5px;font-weight:500;text-align:center;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em;}
+  .status-bar .dot{width:7px;height:7px;border-radius:50%;background:#7CD9B0;animation:pulse 1.6s infinite;flex:none;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+  /* hero */
+  header.hero{background:linear-gradient(180deg,#FFFFFF 0%,var(--sand) 100%);border-bottom:1px solid var(--line);}
+  .hero-inner{padding:38px 24px 30px;text-align:center;}
+  .brand-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;}
+  .brand-mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(155deg,var(--teal),var(--teal-deep));display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Plus Jakarta Sans';font-weight:800;font-size:21px;flex:none;box-shadow:var(--shadow);}
+  .hero-title{font-size:34px;font-weight:800;letter-spacing:.01em;color:var(--teal-deep);margin:0;}
+  .hero-tagline{font-size:15px;color:var(--ink-soft);margin:0;font-weight:500;}
+  .hero-badges{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+  .hero-badge{font-size:11.5px;font-weight:600;color:var(--teal-deep);background:var(--sage-bg);border:1px solid #D6E4CC;border-radius:99px;padding:6px 13px;display:inline-flex;align-items:center;gap:5px;}
+
+  main{padding:32px 0 60px;}
+  .grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start;}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr;} .hero-title{font-size:28px;}}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow);}
+  .panel-eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin:0 0 6px;}
+  .panel h2{font-size:18px;margin:0 0 4px;color:var(--teal-deep);display:flex;align-items:center;gap:8px;font-weight:800;}
+  .panel .sub{font-size:13px;color:var(--ink-soft);margin:0 0 20px;}
+
+  .profile-chip{display:flex;align-items:center;gap:11px;background:var(--sky-bg);border:1px solid #D6E3EC;border-radius:var(--radius-md);padding:12px 15px;margin-bottom:20px;}
+  .profile-chip .avatar{width:38px;height:38px;border-radius:50%;background:var(--sky);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex:none;}
+  .profile-chip .info b{font-size:14px;color:var(--ink);}
+  .profile-chip .info span{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+
+  .field-label{font-size:12.5px;font-weight:700;color:var(--ink);margin:0 0 10px;display:block;letter-spacing:.01em;}
+
+  /* source mode tabs */
+  .mode-tabs{display:flex;gap:8px;margin-bottom:18px;}
+  .mode-tab{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:var(--radius-md);padding:13px 10px;font-size:13px;font-weight:700;color:var(--ink-soft);transition:.15s;}
+  .mode-tab:hover{border-color:var(--teal);}
+  .mode-tab.active{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:var(--shadow);}
+
+  /* camera / upload */
+  .cam-box{border:1.5px dashed var(--line);border-radius:var(--radius-md);padding:18px;text-align:center;background:#FBFAF6;margin-bottom:16px;}
+  .cam-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px;}
+  .cam-btn{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 15px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:.15s;}
+  .cam-btn:hover{border-color:var(--teal);}
+  .cam-btn.primary{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .cam-btn.primary:hover{background:var(--teal-deep);}
+  video, .preview-img{width:100%;max-width:320px;border-radius:10px;display:none;margin:10px auto 0;box-shadow:var(--shadow);}
+  .cam-note{font-size:11.5px;color:var(--ink-soft);margin-top:8px;}
+  .cam-error{background:var(--coral-bg);color:#8A2F27;border-radius:8px;padding:9px 12px;font-size:12px;margin-top:8px;display:none;}
+
+  .dest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin-bottom:18px;}
+  .dest{border:1.5px solid var(--line);background:#fff;border-radius:var(--radius-md);padding:15px 10px;text-align:center;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:7px;}
+  .dest .ic{font-size:23px;}
+  .dest .name{font-size:11.5px;font-weight:700;}
+  .dest:hover{border-color:var(--teal);transform:translateY(-1px);}
+  .dest.sel{border-color:var(--teal);background:var(--sage-bg);box-shadow:var(--shadow);}
+  .dest:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+  .note-field{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13px;margin-bottom:18px;resize:vertical;min-height:48px;background:#fff;color:var(--ink);}
+  .note-field:focus{outline:none;border-color:var(--teal);}
+
+  .time-opts{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+  .time-opt{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 18px;font-size:13px;font-weight:600;transition:.15s;}
+  .time-opt.sel{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+  .gen-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:var(--radius-md);padding:15px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s;box-shadow:var(--shadow);}
+  .gen-btn:hover{background:var(--teal-deep);}
+  .gen-btn:disabled{opacity:.65;cursor:wait;}
+  .spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* AI environment analysis card */
+  .env-analysis{background:var(--sky-bg);border:1px solid #D6E3EC;border-radius:var(--radius-md);padding:16px 17px;margin-bottom:18px;display:none;}
+  .env-analysis-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .env-analysis-head .env-icon{font-size:16px;}
+  .env-analysis-head h3{margin:0;font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#2E4C64;}
+  .env-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+  @media (max-width:420px){.env-grid{grid-template-columns:1fr;}}
+  .env-item{background:#fff;border-radius:9px;padding:10px 12px;}
+  .env-label{display:block;font-size:10.5px;color:var(--ink-soft);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+  .env-value{font-size:13.5px;font-weight:700;color:var(--teal-deep);}
+
+  .scene-box{background:var(--sky-bg);border:1px solid #CFE0EC;border-radius:10px;padding:11px 14px;font-size:12.5px;color:#2E4C64;margin-top:14px;display:none;}
+  .scene-box b{display:block;font-size:11.5px;margin-bottom:3px;color:#1E3850;}
+
+  .validator{margin-top:16px;border-top:1px dashed var(--line);padding-top:14px;display:none;}
+  .validator h3{font-size:12.5px;margin:0 0 10px;color:var(--ink-soft);font-weight:700;}
+  .check-row{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 0;color:var(--ink-soft);}
+  .check-row .mark{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;flex:none;}
+  .mark.pass{background:var(--sage);}
+  .mark.fail{background:var(--coral);}
+
+  .story-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px;margin-top:16px;}
+  .story-section-label{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
+  .story-text{font-size:16px;line-height:1.85;color:var(--ink);margin:0 0 18px;}
+  .story-empty{text-align:center;color:var(--ink-soft);font-size:13px;padding:28px 10px;}
+  .secondary-btn{background:var(--sage) !important;}
+  .secondary-btn:hover{background:#5C8A4C !important;}
+
+  .why-story{background:var(--sage-bg);border-radius:var(--radius-md);padding:16px 18px;margin-top:6px;}
+  .why-story h4{margin:0 0 8px;font-size:13px;color:#3C5A34;font-weight:800;}
+  .why-story p{margin:0 0 8px;font-size:12.5px;color:#3C5A34;}
+  .why-story ul{margin:0;padding-inline-start:20px;font-size:12.5px;color:#3C5A34;}
+  .why-story li{margin-bottom:4px;}
+
+  .sources-section{margin-top:18px;border-top:1px dashed var(--line);padding-top:16px;}
+  .sources-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:10px;flex-wrap:wrap;}
+  .sources-head h4{margin:0;font-size:12.5px;color:var(--ink-soft);font-weight:800;letter-spacing:.02em;}
+  .view-sources-btn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-size:11.5px;font-weight:700;color:var(--teal-deep);white-space:nowrap;}
+  .view-sources-btn:hover{border-color:var(--teal);}
+  .sources-chips{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;font-weight:500;}
+  .sources-list{display:flex;flex-direction:column;gap:7px;}
+  .source-link{font-size:12px;color:var(--teal-deep);text-decoration:none;padding:8px 11px;background:var(--sand);border-radius:8px;font-weight:600;}
+  .source-link:hover{text-decoration:underline;}
+
+  .child-view{background:linear-gradient(160deg,#FFFDF8,#FBF6EA);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px 26px;text-align:center;}
+  .child-view .story-big{font-size:20px;line-height:1.9;color:var(--teal-deep);margin-bottom:20px;font-weight:600;}
+  .speak-btn{background:var(--sky);color:#fff;border:none;border-radius:12px;padding:13px 24px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;box-shadow:var(--shadow);}
+  .speak-btn:hover{background:#4A6E8E;}
+  .voice-note{font-size:11px;color:var(--ink-soft);margin-bottom:18px;}
+  .tools-row{display:flex;justify-content:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
+  .tool-btn{background:#fff;border:1.5px solid var(--line);border-radius:var(--radius-md);padding:13px 17px;font-size:12.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:92px;}
+  .tool-btn .ic{font-size:23px;}
+  .tool-btn:hover{border-color:var(--amber);}
+  .react-row{display:flex;justify-content:center;gap:16px;}
+  .react-btn{background:none;border:none;font-size:30px;padding:6px;border-radius:50%;transition:.15s;}
+  .react-btn:hover{background:var(--sage-bg);transform:scale(1.1);}
+
+  .log-list{margin-top:14px;}
+  .log-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12.5px;}
+  .log-item:last-child{border-bottom:none;}
+  .log-item .em{font-size:17px;}
+  .log-item .meta{color:var(--ink-soft);margin-inline-start:auto;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--teal-deep);color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:var(--shadow-lg);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+
+  .science{margin-top:22px;padding-top:16px;border-top:1px dashed var(--line);}
+  .science-label{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;}
+  .chip{font-size:11.5px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);display:inline-block;margin:0 6px 6px 0;font-weight:600;}
+
+  .tabs{display:flex;gap:8px;margin-bottom:20px;}
+  .tabbtn{flex:1;background:#fff;border:1.5px solid var(--line);border-radius:var(--radius-md);padding:12px;font-size:13.5px;font-weight:700;color:var(--ink-soft);transition:.15s;}
+  .tabbtn:hover{border-color:var(--teal);}
+  .tabbtn.active{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:var(--shadow);}
+
+  .error-box{background:var(--coral-bg);color:#8A2F27;border-radius:10px;padding:12px 15px;font-size:13px;margin-top:12px;font-weight:500;}
+  footer{padding:24px 0 44px;text-align:center;color:var(--ink-soft);font-size:12px;}
+</style>
+</head>
+<body>
+
+<div class="status-bar"><span class="dot"></span> Live Demo — Connected to FastAPI Backend</div>
+
+<header class="hero">
+  <div class="hero-inner wrap">
+    <div class="brand-row">
+      <div class="brand-mark">H</div>
+      <div style="text-align:left;">
+        <h1 class="hero-title">HAMSA</h1>
+      </div>
+    </div>
+    <p class="hero-tagline">AI-Powered Adaptive Preparation for Learners on the Autism Spectrum</p>
+    <div class="hero-badges">
+      <span class="hero-badge">🧩 Evidence-Based</span>
+      <span class="hero-badge">⚡ Real-Time Generation</span>
+      <span class="hero-badge">🔒 Privacy-Aware</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid2">
+
+    <!-- ===== Teacher View panel ===== -->
+    <div class="panel">
+      <div class="panel-eyebrow">Teacher View</div>
+      <h2>🧑‍🏫 Prepare the Next Transition</h2>
+      <p class="sub">Choose how HAMSA should understand the upcoming environment</p>
+
+      <div class="profile-chip">
+        <div class="avatar">S</div>
+        <div class="info"><b>Sultan — 7 years old</b><span>Known tools: Sensory Ball, Count to Ten, Noise-Cancelling Headphones</span></div>
+      </div>
+
+      <span class="field-label">Step 1 · How would you like to provide destination info?</span>
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="modeCamBtn">📷 Camera / Upload Image</button>
+        <button class="mode-tab" id="modePresetBtn">📍 Choose Destination</button>
+      </div>
+
+      <!-- Camera mode -->
+      <div id="modeCam">
+        <div class="cam-box">
+          <div class="cam-actions">
+            <label class="cam-btn primary" for="fileInput">📁 Capture / Upload Photo</label>
+            <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none;">
+            <button class="cam-btn" id="liveCamBtn">🎥 Open Live Camera</button>
+          </div>
+          <video id="video" autoplay playsinline muted></video>
+          <button class="cam-btn primary" id="captureBtn" style="display:none;margin-top:8px;">📸 Capture Now</button>
+          <img id="previewImg" class="preview-img" alt="Destination photo preview">
+          <button class="cam-btn" id="retakeBtn" style="display:none;margin-top:8px;">🔄 Retake Photo</button>
+          <div class="cam-note">The photo is used only to analyze the environment during generation, and is not stored afterward.</div>
+          <div class="cam-error" id="camError"></div>
+        </div>
+      </div>
+
+      <!-- Preset mode -->
+      <div id="modePreset" style="display:none;">
+        <span class="field-label">Where is the student going next?</span>
+        <div class="dest-grid" id="destGrid"></div>
+      </div>
+
+      <span class="field-label">Additional note (optional)</span>
+      <textarea class="note-field" id="noteField" rows="2" placeholder="Add any extra context not visible in the photo (e.g., a substitute teacher today)..."></textarea>
+
+      <span class="field-label">Time remaining before transition</span>
+      <div class="time-opts" id="timeOpts"></div>
+
+      <div class="env-analysis" id="envAnalysis">
+        <div class="env-analysis-head"><span class="env-icon">🧭</span><h3>AI Environment Analysis</h3></div>
+        <div class="env-grid">
+          <div class="env-item"><span class="env-label">Detected Environment</span><span class="env-value" id="envDetected">—</span></div>
+          <div class="env-item"><span class="env-label">Noise Level</span><span class="env-value" id="envNoise">—</span></div>
+          <div class="env-item"><span class="env-label">Preparation Level</span><span class="env-value" id="envPrep">—</span></div>
+          <div class="env-item"><span class="env-label">Recommended Duration</span><span class="env-value" id="envDuration">—</span></div>
+        </div>
+      </div>
+
+      <button class="gen-btn" id="genBtn">✨ Generate Personalized Story</button>
+
+      <div id="errorBox"></div>
+
+      <div class="scene-box" id="sceneBox"><b>What the AI detected in the photo</b><span id="sceneText"></span></div>
+
+      <div class="validator" id="validatorBox">
+        <h3>Quality Check (automatic, before showing to the child)</h3>
+        <div id="checks"></div>
+      </div>
+
+      <div class="story-card" id="storyPreview">
+        <div class="story-empty">Capture a photo or choose a destination, then tap "Generate Personalized Story" to see it here</div>
+      </div>
+
+      <div class="science">
+        <div class="science-label">Grounded in Research</div>
+        <span class="chip">Carol Gray — Social Stories</span>
+        <span class="chip">Priming — ABA</span>
+        <span class="chip">Zones of Regulation</span>
+      </div>
+    </div>
+
+    <!-- ===== Child View + Log panel ===== -->
+    <div class="panel">
+      <div class="panel-eyebrow">Learner Experience</div>
+      <div class="tabs">
+        <button class="tabbtn active" id="tabChild">👦 Child View</button>
+        <button class="tabbtn" id="tabLog">📋 Activity Log</button>
+      </div>
+
+      <div id="childSection">
+        <div class="child-view" id="childEmpty">
+          <p style="color:var(--ink-soft);font-size:13.5px;">Once a story is generated, the Child View appears here — large readable text, voice narration, and self-selected coping tools.</p>
+        </div>
+      </div>
+
+      <div id="logSection" style="display:none;">
+        <p class="sub">This activity log helps track how the learner responds over time — a simplified preview of the feedback loop.</p>
+        <div class="log-list" id="logList"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>HAMSA — Part of the Shadow Teacher Ecosystem — Built on evidence-based practices — Hackathon Demo</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const CHILD = {
+  name: "Sultan", age: 7,
+  known_tools: [
+    {label:"Sensory Ball", icon:"🟢"},
+    {label:"Count to Ten", icon:"🔟"},
+    {label:"Noise-Cancelling Headphones", icon:"🎧"}
+  ]
+};
+
+const DESTINATIONS = [
+  {id:'resource', name:'Resource Room', icon:'📚', desc:'Round table, 4 chairs, bookshelf, natural light — Mr. Saad is always present', noise:'Low'},
+  {id:'yard',     name:'Outdoor Yard', icon:'🌳', desc:'Open space, swings and slide, lots of student noise, bright light', noise:'High'},
+  {id:'art',      name:'Art Classroom', icon:'🎨', desc:'Group tables, paints and art supplies, smell of watercolors — Ms. Mona', noise:'Medium'},
+  {id:'clinic',   name:'School Clinic', icon:'🩺', desc:'Small bed, medicine cabinet, complete quiet — Nurse Um Abdullah', noise:'Very Low'},
+  {id:'library',  name:'Library', icon:'📖', desc:'Bookshelves, quiet reading table, colorful rug, dim lighting', noise:'Very Low'},
+];
+
+const TIME_OPTS = [ {v:2, label:'2 minutes'}, {v:5, label:'5 minutes'}, {v:10, label:'10 minutes'} ];
+
+// FastAPI server address — change this if you run the backend on a different port/domain
+const API_BASE_URL = 'http://127.0.0.1:8000';
+
+let inputMode = 'camera';
+let selectedDest = null;
+let selectedTime = 5;
+let capturedImageBase64 = null;
+let cameraStream = null;
+let currentStory = null;
+let currentSceneLabel = '';
+let arabicVoice = null;
+
+// short display labels for known knowledge-base sources, e.g. "TEACCH · Social Stories · Visual Supports"
+const SOURCE_SHORT_LABELS = { 'AS-01':'TEACCH', 'AS-02':'Social Stories', 'AS-03':'Visual Supports' };
+function shortSourceLabel(s){
+  return SOURCE_SHORT_LABELS[s.source_id] || (s.title ? s.title.split(' ').slice(0,2).join(' ') : s.source_id);
+}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=> toast.classList.remove('show'), 2600);
+}
+function setError(msg){
+  document.getElementById('errorBox').innerHTML = msg ? `<div class="error-box">${msg}</div>` : '';
+}
+function stopCameraStream(){
+  if(cameraStream){
+    cameraStream.getTracks().forEach(t=>t.stop());
+    cameraStream = null;
+  }
+}
+window.addEventListener('beforeunload', stopCameraStream);
+
+// ---- AI Environment Analysis card (presentation-only, derived from local data) ----
+function prepLevelFromNoise(noise){
+  if(!noise) return 'Assessing…';
+  const n = noise.toLowerCase();
+  if(n.includes('high')) return 'High';
+  if(n.includes('medium')) return 'Medium';
+  return 'Low';
+}
+function durationFromNoise(noise){
+  if(!noise) return '—';
+  const n = noise.toLowerCase();
+  if(n.includes('high')) return '10 minutes';
+  if(n.includes('medium')) return '5 minutes';
+  return '2 minutes';
+}
+function updateEnvAnalysis({detected, noise, prep, duration}){
+  const box = document.getElementById('envAnalysis');
+  box.style.display = 'block';
+  document.getElementById('envDetected').textContent = detected || '—';
+  document.getElementById('envNoise').textContent = noise || '—';
+  document.getElementById('envPrep').textContent = prep || '—';
+  document.getElementById('envDuration').textContent = duration || '—';
+}
+
+const modeCamBtn = document.getElementById('modeCamBtn');
+const modePresetBtn = document.getElementById('modePresetBtn');
+modeCamBtn.addEventListener('click', ()=>{
+  inputMode = 'camera';
+  modeCamBtn.classList.add('active'); modePresetBtn.classList.remove('active');
+  document.getElementById('modeCam').style.display='block';
+  document.getElementById('modePreset').style.display='none';
+  setError('');
+});
+modePresetBtn.addEventListener('click', ()=>{
+  inputMode = 'preset';
+  modePresetBtn.classList.add('active'); modeCamBtn.classList.remove('active');
+  document.getElementById('modePreset').style.display='block';
+  document.getElementById('modeCam').style.display='none';
+  stopCameraStream();
+  document.getElementById('video').style.display='none';
+  setError('');
+});
+
+document.getElementById('fileInput').addEventListener('change', (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const dataUrl = reader.result;
+    capturedImageBase64 = dataUrl.split(',')[1];
+    const img = document.getElementById('previewImg');
+    img.src = dataUrl; img.style.display = 'block';
+    document.getElementById('video').style.display = 'none';
+    document.getElementById('captureBtn').style.display = 'none';
+    document.getElementById('retakeBtn').style.display = 'inline-flex';
+    updateEnvAnalysis({detected:'Photo captured — ready for AI analysis', noise:'Pending', prep:'Pending', duration:'Pending'});
+  };
+  reader.onerror = ()=> showCamError('Could not read the image file. Please try a different one.');
+  reader.readAsDataURL(file);
+});
+
+const liveCamBtn = document.getElementById('liveCamBtn');
+const video = document.getElementById('video');
+const captureBtn = document.getElementById('captureBtn');
+const retakeBtn = document.getElementById('retakeBtn');
+const previewImg = document.getElementById('previewImg');
+
+liveCamBtn.addEventListener('click', async ()=>{
+  document.getElementById('camError').style.display='none';
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showCamError('This browser does not support direct camera access. Please use the "Capture / Upload Photo" button instead.');
+    return;
+  }
+  try{
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' } });
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    previewImg.style.display = 'none';
+    captureBtn.style.display = 'inline-flex';
+    retakeBtn.style.display = 'none';
+  }catch(err){
+    showCamError('Could not access the camera. Please use "Capture / Upload Photo" instead.');
+  }
+});
+
+captureBtn.addEventListener('click', ()=>{
+  if(!video.videoWidth){ showCamError('Camera stream has not started yet.'); return; }
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  capturedImageBase64 = dataUrl.split(',')[1];
+  previewImg.src = dataUrl; previewImg.style.display = 'block';
+  video.style.display = 'none';
+  captureBtn.style.display = 'none';
+  retakeBtn.style.display = 'inline-flex';
+  stopCameraStream();
+  updateEnvAnalysis({detected:'Photo captured — ready for AI analysis', noise:'Pending', prep:'Pending', duration:'Pending'});
+});
+
+retakeBtn.addEventListener('click', ()=>{
+  capturedImageBase64 = null;
+  previewImg.style.display = 'none';
+  retakeBtn.style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('envAnalysis').style.display = 'none';
+});
+
+function showCamError(msg){
+  const el = document.getElementById('camError');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+const destGrid = document.getElementById('destGrid');
+DESTINATIONS.forEach(d=>{
+  const btn = document.createElement('button');
+  btn.className = 'dest';
+  btn.innerHTML = `<span class="ic">${d.icon}</span><span class="name">${d.name}</span>`;
+  btn.addEventListener('click', ()=>{
+    selectedDest = d.id;
+    document.querySelectorAll('.dest').forEach(x=>x.classList.remove('sel'));
+    btn.classList.add('sel');
+    updateEnvAnalysis({
+      detected: d.name,
+      noise: d.noise,
+      prep: prepLevelFromNoise(d.noise),
+      duration: durationFromNoise(d.noise)
+    });
+  });
+  destGrid.appendChild(btn);
+});
+
+const timeOpts = document.getElementById('timeOpts');
+TIME_OPTS.forEach((t,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'time-opt'+(i===1?' sel':'');
+  btn.textContent = t.label;
+  btn.addEventListener('click', ()=>{
+    selectedTime = t.v;
+    document.querySelectorAll('.time-opt').forEach(x=>x.classList.remove('sel'));
+    btn.classList.add('sel');
+  });
+  timeOpts.appendChild(btn);
+});
+
+const genBtn = document.getElementById('genBtn');
+const storyPreview = document.getElementById('storyPreview');
+const validatorBox = document.getElementById('validatorBox');
+const checksEl = document.getElementById('checks');
+const sceneBox = document.getElementById('sceneBox');
+const sceneText = document.getElementById('sceneText');
+
+genBtn.addEventListener('click', async ()=>{
+  setError('');
+  sceneBox.style.display = 'none';
+  validatorBox.style.display = 'none';
+
+  if(inputMode === 'preset' && !selectedDest){
+    setError('Please select a destination first.');
+    return;
+  }
+  if(inputMode === 'camera' && !capturedImageBase64){
+    setError('Please capture or upload a photo of the destination first.');
+    return;
+  }
+
+  genBtn.disabled = true;
+  genBtn.innerHTML = '<span class="spinner"></span> Generating...';
+
+  // Simple professional progress indicator while the backend call is in flight
+  const progressStepsList = ['🔍 Analyzing environment...', '📚 Retrieving knowledge...', '🧠 Personalizing story...'];
+  let progressIndex = 0;
+  storyPreview.innerHTML = `<div class="story-empty" id="progressLabel">${progressStepsList[0]}</div>`;
+  const progressInterval = setInterval(()=>{
+    progressIndex = (progressIndex + 1) % progressStepsList.length;
+    const label = document.getElementById('progressLabel');
+    if(label) label.textContent = progressStepsList[progressIndex];
+  }, 750);
+
+  // Build the request payload sent to FastAPI based on what the user selected
+  const destObj = inputMode === 'preset' ? DESTINATIONS.find(d=>d.id===selectedDest) : null;
+
+  const requestBody = {
+    learner_profile: {
+      name: CHILD.name,
+      age: CHILD.age,
+      known_tools: CHILD.known_tools.map(t=>t.label)
+    },
+    scenario: {
+      mode: inputMode === 'preset' ? 'preset' : 'camera',
+      destination_id: destObj ? destObj.id : null,
+      destination_name: destObj ? destObj.name : null,
+      destination_description: destObj ? destObj.desc : null,
+      noise_level: destObj ? destObj.noise : null,
+      image_base64: inputMode === 'camera' ? capturedImageBase64 : null
+    },
+    current_activity: document.getElementById('noteField').value ? document.getElementById('noteField').value.trim() : null,
+    preferences: {
+      time_remaining_minutes: selectedTime
+    }
+  };
+
+  try{
+    const res = await fetch(`${API_BASE_URL}/api/generate-story`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    });
+
+    if(!res.ok){
+      throw new Error(`Server request failed (status ${res.status})`);
+    }
+
+    const data = await res.json();
+
+    clearInterval(progressInterval);
+
+    if(!data.success){
+      setError(data.error || 'Could not generate the story. Please try again.');
+      storyPreview.innerHTML = '<div class="story-empty">Capture a photo or choose a destination, then tap "Generate Personalized Story" to see it here</div>';
+      return;
+    }
+
+    currentSceneLabel = data.scenario || (destObj ? destObj.name : 'the destination');
+    currentStory = data.story;
+
+    if(data.scene_description){
+      sceneText.textContent = data.scene_description;
+      sceneBox.style.display = 'block';
+    }
+
+    updateEnvAnalysis({
+      detected: data.scenario || (destObj ? destObj.name : 'Detected from photo'),
+      noise: destObj ? destObj.noise : (data.scene_description ? 'Assessed from photo' : '—'),
+      prep: prepLevelFromNoise(destObj ? destObj.noise : ''),
+      duration: selectedTime + ' minutes'
+    });
+
+    const progressLabel = document.getElementById('progressLabel');
+    if(progressLabel) progressLabel.textContent = '✅ Ready';
+    await new Promise(r => setTimeout(r, 350));
+
+    renderStory(data.story, data.sources);
+    runValidator(data.validation);
+
+  }catch(err){
+    clearInterval(progressInterval);
+    setError('Could not connect to the HAMSA backend. Make sure the server is running at ' + API_BASE_URL + ' — ' + err.message);
+    storyPreview.innerHTML = '<div class="story-empty">Capture a photo or choose a destination, then tap "Generate Personalized Story" to see it here</div>';
+  }finally{
+    clearInterval(progressInterval);
+    genBtn.disabled = false;
+    genBtn.innerHTML = '✨ Generate Personalized Story';
+  }
+});
+
+function renderStory(story, sources){
+  const hasSources = sources && sources.length;
+  const sourceChips = hasSources ? sources.map(shortSourceLabel).join(' · ') : 'No sources available';
+  const sourcesListHtml = hasSources
+    ? sources.map(s => s.url
+        ? `<a class="source-link" href="${s.url}" target="_blank" rel="noopener">${s.title}</a>`
+        : `<span class="source-link">${s.title}</span>`
+      ).join('')
+    : '';
+
+  storyPreview.innerHTML = `
+    <div class="story-section-label">Personalized Preparation Story</div>
+    <p class="story-text">${story}</p>
+    <button class="gen-btn secondary-btn" id="sendToChild">👦 Preview in Child View</button>
+
+    <div class="why-story">
+      <h4>💡 Why this story?</h4>
+      <p>This story was adapted based on:</p>
+      <ul>
+        <li>Learner preferences</li>
+        <li>Environment</li>
+        <li>Sensory needs</li>
+        <li>Evidence-based strategies</li>
+      </ul>
+    </div>
+
+    <div class="sources-section">
+      <div class="sources-head">
+        <h4>📚 Knowledge Sources</h4>
+        ${hasSources ? '<button class="view-sources-btn" id="viewSourcesBtn">View Sources</button>' : ''}
+      </div>
+      <div class="sources-chips">${sourceChips}</div>
+      <div class="sources-list" id="sourcesList" style="display:none;">${sourcesListHtml}</div>
+    </div>
+  `;
+  document.getElementById('sendToChild').addEventListener('click', showChildView);
+
+  const viewBtn = document.getElementById('viewSourcesBtn');
+  if(viewBtn){
+    viewBtn.addEventListener('click', ()=>{
+      const list = document.getElementById('sourcesList');
+      const isOpen = list.style.display === 'block';
+      list.style.display = isOpen ? 'none' : 'block';
+      viewBtn.textContent = isOpen ? 'View Sources' : 'Hide Sources';
+    });
+  }
+}
+
+function runValidator(checks){
+  if(!checks || !checks.length){
+    validatorBox.style.display = 'none';
+    return;
+  }
+  checksEl.innerHTML = checks.map(c=>`
+    <div class="check-row"><span class="mark ${c.pass ? 'pass' : 'fail'}">${c.pass ? '✓' : '✕'}</span><span>${c.label}</span></div>`).join('');
+  validatorBox.style.display = 'block';
+}
+
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  arabicVoice = voices.find(v=> v.lang && v.lang.toLowerCase().startsWith('ar')) || null;
+}
+if('speechSynthesis' in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function showChildView(){
+  document.getElementById('tabChild').click();
+  const childSection = document.getElementById('childSection');
+  const toolsHtml = CHILD.known_tools.map(t=>`<div class="tool-btn"><span class="ic">${t.icon}</span><span>${t.label}</span></div>`).join('');
+  const voiceNote = arabicVoice ? '' : '<div class="voice-note">A dedicated voice for this story\'s language may not be available on this device; the browser\'s best available voice will be used.</div>';
+
+  childSection.innerHTML = `
+    <div class="child-view">
+      <div class="story-big">${currentStory}</div>
+      <button class="speak-btn" id="speakBtn">🔊 Read Story Aloud</button>
+      ${voiceNote}
+      <div class="tools-row">${toolsHtml}</div>
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;">How do you feel now?</p>
+      <div class="react-row">
+        <button class="react-btn" data-em="🙂">🙂</button>
+        <button class="react-btn" data-em="😐">😐</button>
+        <button class="react-btn" data-em="😟">😟</button>
+      </div>
+    </div>`;
+
+  document.getElementById('speakBtn').addEventListener('click', ()=>{
+    if(!('speechSynthesis' in window)){
+      showToast('Text-to-speech is not supported in this browser.');
+      return;
+    }
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(currentStory);
+    utter.lang = 'ar-SA';
+    utter.rate = 0.9;
+    if(arabicVoice) utter.voice = arabicVoice;
+    speechSynthesis.speak(utter);
+  });
+
+  childSection.querySelectorAll('.react-btn').forEach(b=>{
+    b.addEventListener('click', ()=> saveReaction(b.dataset.em));
+  });
+}
+
+async function saveReaction(emoji){
+  const entry = {
+    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),
+    destination: currentSceneLabel || '—',
+    emoji
+  };
+  let log = [];
+  try{
+    const existing = await window.storage.get('hamsa:log', false);
+    if(existing && existing.value) log = JSON.parse(existing.value);
+  }catch(e){ log = []; }
+  log.unshift(entry);
+  log = log.slice(0,10);
+  try{ await window.storage.set('hamsa:log', JSON.stringify(log), false); }
+  catch(e){ console.error('Could not save the activity log', e); }
+  showToast('Reaction saved — this helps personalize future stories.');
+  renderLog(log);
+}
+
+async function renderLog(preloaded){
+  const logList = document.getElementById('logList');
+  let log = preloaded;
+  if(!log){
+    try{
+      const existing = await window.storage.get('hamsa:log', false);
+      log = existing && existing.value ? JSON.parse(existing.value) : [];
+    }catch(e){ log = []; }
+  }
+  if(!log || log.length === 0){
+    logList.innerHTML = '<div class="story-empty">No sessions logged yet — generate a story and let the child react to see the log here</div>';
+    return;
+  }
+  logList.innerHTML = log.map(l=>`
+    <div class="log-item"><span class="em">${l.emoji}</span><span><b>${l.destination}</b></span><span class="meta">${l.time}</span></div>`).join('');
+}
+
+document.getElementById('tabChild').addEventListener('click', ()=>{
+  document.getElementById('tabChild').classList.add('active');
+  document.getElementById('tabLog').classList.remove('active');
+  document.getElementById('childSection').style.display = 'block';
+  document.getElementById('logSection').style.display = 'none';
+});
+document.getElementById('tabLog').addEventListener('click', ()=>{
+  document.getElementById('tabLog').classList.add('active');
+  document.getElementById('tabChild').classList.remove('active');
+  document.getElementById('logSection').style.display = 'block';
+  document.getElementById('childSection').style.display = 'none';
+  renderLog();
+});
+</script>
+
+</body>
+</html>
