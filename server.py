@@ -61,10 +61,6 @@ def tokenize(text):
 
 
 def match_scenario(kb, context_text, noise_level=None):
-    """Finds the closest behavioral_scenarios entry using simple keyword overlap
-    between the incoming context text and each scenario's title_ar/trigger_ar.
-    Falls back to the first scenario in the KB if nothing matches, so generation
-    never breaks even when the frontend sends English destination text."""
     scenarios = kb.get('behavioral_scenarios', [])
     if not scenarios:
         return None
@@ -110,7 +106,6 @@ def get_source_by_id(kb, source_id):
 
 
 def get_generation_sources(kb):
-    """Only sources from authentic_sources are ever returned — never invented by the AI."""
     policy = kb.get('educational_policy', {})
     source_ids = policy.get('source_ids', [])
     sources = []
@@ -338,5 +333,4 @@ def generate_story():
 
 
 if __name__ == '__main__':
-    # Port kept at 8000 to match the API_BASE_URL already set in index.html
     app.run(debug=True, port=8000)
